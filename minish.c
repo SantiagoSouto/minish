@@ -18,15 +18,56 @@
 #define HELP_SETENV  "setenv var valor - agrega o cambia valor de variable de ambiente"
 #define HELP_STATUS  "status - muestra status de retorno de ultimo comando ejecutado"
 #define HELP_UID     "uid - muestra nombre y número de usuario dueño del minish"
+#define HELP_GID     "gid - muestra el grupo principal y los grupos secundarios del usuario dueño del minish"
+
 
 struct builtin_struct builtin_arr[] = {
+{ "cd", builtin_cd, HELP_CD },
 { "uid", builtin_uid, HELP_UID },
+{ "pid", builtin_pid, HELP_PID },
+{ "gid", builtin_gid, HELP_GID },
 {NULL, NULL, NULL}
 };
 
 int
 main(void)
 {
+	int argc, cmd_argc;
+	char *argv[MAXARG];
+	argc = MAXARG;
+
+	int globalstatret = 0;
+	char directory[MAXWORDS];
+	char *user_name; 
+	char line[MAXLINE];
+	char endstr[] = ENDSTR;
+	
+	user_name = strdup(getenv("USER"));
+	getcwd(directory, MAXWORDS);
+	fprintf(stderr, "(minish) (%s):%s > ", user_name, directory);
+
+	while( fgets(line, MAXLINE, stdin) != NULL ) {
+		
+		if( strcmp(line, endstr) == 0 ){
+			break;
+		}
+		
+		cmd_argc = linea2argv(line, argc, argv);
+		globalstatret = ejecutar(cmd_argc, argv);
+		
+		printf("Exit status: %d\n", globalstatret);
+		
+		getcwd(directory, MAXWORDS);
+		fprintf(stderr, "(minish) (%s):%s > ", user_name, directory);
+	}
+	
+	printf("\n");
+	exit(EXIT_SUCCESS);
+
+}
+
+
+/*
 	int argc, cmd_argc, result;
 	char *argv[MAXARG];
 	argc = MAXARG;
@@ -48,7 +89,7 @@ main(void)
 		}
 		
 		cmd_argc = linea2argv(line, argc, argv);
-/*
+
 		
 		argvp = argv;
 
@@ -57,10 +98,10 @@ main(void)
 		while( *argvp != NULL ){
 			printf("%s\n", *argvp++);
 		}
-*/
+
 		result = ejecutar(cmd_argc, argv);
 
-		printf("Exit status: %d\n", result);
+//		printf("Exit status: %d\n", result);
 
 		fprintf(stderr, "(minish) (%s):%s > ", user_name, directory);
 	}
@@ -68,4 +109,4 @@ main(void)
 	printf("\n");
 	exit(EXIT_SUCCESS);
 }	
-
+*/

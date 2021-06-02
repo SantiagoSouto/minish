@@ -46,6 +46,9 @@ struct builtin_struct {         // struct con información de los builtins
     char *help_txt;             // el texto de ayuda
 };
 
+extern char *getcwd(char *buf, int size);
+extern int chdir(char *dir_name);
+
 extern struct builtin_struct builtin_arr[];
 extern struct builtin_struct * builtin_lookup(char *cmd);
 /*
