@@ -5,8 +5,11 @@ CC=gcc
 CFLAGS=-Wall -Wextra -std=gnu99 -ggdb
 
 # Este es el ejecutable y sus dependencias serian los '.o'
-minish:	  
+minish:	linea2argv.o builtin_uid.o externo.o ejecutar.o
 
 # Solo se agrega la dependencia al '.h'
 minish.o:	minish.h 
-
+linea2argv.o:	minish.h
+builtin_uid.o:	minish.h
+externo.o:	minish.h
+ejecutar.o:	minish.h
