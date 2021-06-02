@@ -6,7 +6,7 @@
 
 #define MAXLINE 1024
 #define ENDSTR "FIN\n"
-#define MAXARG 3
+#define MAXARG 100
 
 #define HELP_CD      "cd [..|dir] - cambia de directorio corriente"
 #define HELP_DIR     "dir [str]- muestra archivos en directorio corriente, que tengan 'str'"
