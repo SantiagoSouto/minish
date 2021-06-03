@@ -1,4 +1,4 @@
-
+#include "minish.h"
 
 #include <stdlib.h>
 #include <errno.h>
@@ -22,7 +22,8 @@ builtin_gid(int argc, char *argv[])
 
 	if (argc != 1) {
 		fprintf(stderr, "Usage: %s\n", argv[0]);
-		return EXIT_FAILURE;
+		errno = E2BIG;
+		return errno;
 	}
 
 	grp = getgrgid(getgid());

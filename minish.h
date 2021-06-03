@@ -3,7 +3,7 @@
 #define MAXWORDS 256        // cantidad máxima de palabras en la línea
 #define HISTORY_FILE	".minish_history"   // nombre del archivo que almacena historia de comandos
 
-/*
+
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,7 +19,7 @@
 #include <fcntl.h>
 
 #define MAXARG 100
-*/
+
 // Variables
 extern int globalstatret;	// guarda status del ultimo comando - deberá definirse en el main
 
@@ -46,8 +46,9 @@ struct builtin_struct {         // struct con información de los builtins
     char *help_txt;             // el texto de ayuda
 };
 
-extern char *getcwd(char *buf, int size);
-extern int chdir(char *dir_name);
+
+extern char *getcwd (char *__buf, size_t __size) __THROW __wur;
+extern int chdir (const char *__path) __THROW __nonnull ((1)) __wur;
 
 extern struct builtin_struct builtin_arr[];
 extern struct builtin_struct * builtin_lookup(char *cmd);

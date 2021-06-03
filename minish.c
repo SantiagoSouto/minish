@@ -6,7 +6,7 @@
 
 #define MAXLINE 1024
 #define ENDSTR "FIN\n"
-#define MAXARG 100
+
 
 #define HELP_CD      "cd [..|dir] - cambia de directorio corriente"
 #define HELP_DIR     "dir [str]- muestra archivos en directorio corriente, que tengan 'str'"
@@ -15,19 +15,35 @@
 #define HELP_HISTORY "history [N] - muestra los últimos N (10) comandos escritos"
 #define HELP_GETENV  "getenv var [var] - muestra valor de variable(s) de ambiente"
 #define HELP_PID     "pid - muestra Process Id del minish"
+#define HELP_UNSETENV  "unsetenv var [var] - elimina el valor de variable de ambiente"
 #define HELP_SETENV  "setenv var valor - agrega o cambia valor de variable de ambiente"
 #define HELP_STATUS  "status - muestra status de retorno de ultimo comando ejecutado"
 #define HELP_UID     "uid - muestra nombre y número de usuario dueño del minish"
 #define HELP_GID     "gid - muestra el grupo principal y los grupos secundarios del usuario dueño del minish"
 
 
+int globalstatret = 0;
 struct builtin_struct builtin_arr[] = {
 { "cd", builtin_cd, HELP_CD },
 { "uid", builtin_uid, HELP_UID },
 { "pid", builtin_pid, HELP_PID },
 { "gid", builtin_gid, HELP_GID },
+	
+{ "status", builtin_status, HELP_STATUS },
+{ "setenv", builtin_setenv, HELP_SETENV },
+{ "getenv", builtin_getenv, HELP_GETENV },
+{ "unsetenv", builtin_unsetenv, HELP_UNSETENV },
 {NULL, NULL, NULL}
 };
+
+void
+print_prompt(char *user)
+{
+	
+	char directory[MAXWORDS];
+	getcwd(directory, MAXWORDS);
+	fprintf(stdout, "(minish) (%s):%s > ", user, directory);
+}
 
 int
 main(void)
@@ -36,15 +52,13 @@ main(void)
 	char *argv[MAXARG];
 	argc = MAXARG;
 
-	int globalstatret = 0;
-	char directory[MAXWORDS];
+
 	char *user_name; 
 	char line[MAXLINE];
 	char endstr[] = ENDSTR;
 	
 	user_name = strdup(getenv("USER"));
-	getcwd(directory, MAXWORDS);
-	fprintf(stderr, "(minish) (%s):%s > ", user_name, directory);
+	print_prompt(user_name);
 
 	while( fgets(line, MAXLINE, stdin) != NULL ) {
 		
@@ -53,12 +67,21 @@ main(void)
 		}
 		
 		cmd_argc = linea2argv(line, argc, argv);
+		if( cmd_argc == 0 ){
+			print_prompt(user_name);
+			continue;
+		}
 		globalstatret = ejecutar(cmd_argc, argv);
 		
-		printf("Exit status: %d\n", globalstatret);
+//		printf("Exit status: %d\n", globalstatret);
 		
-		getcwd(directory, MAXWORDS);
-		fprintf(stderr, "(minish) (%s):%s > ", user_name, directory);
+		if( globalstatret != 0 ){
+
+			fprintf(stderr, "Error with commnad %s!\n%s\n", *argv, strerror(errno));
+		
+		}	
+		
+		print_prompt(user_name);
 	}
 	
 	printf("\n");

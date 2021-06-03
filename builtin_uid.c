@@ -16,7 +16,8 @@ builtin_uid(int argc, char *argv[])
 
 	if (argc != 1) {
 		fprintf(stderr, "Usage: %s\n", argv[0]);
-		return EXIT_FAILURE;
+		errno = E2BIG;
+		return errno;
 	}
 
 	bufsize = sysconf(_SC_GETPW_R_SIZE_MAX);

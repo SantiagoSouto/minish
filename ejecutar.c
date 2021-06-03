@@ -30,6 +30,15 @@ int
 ejecutar(int argc, char **argv)
 {
 
+
+//	if( argc == 0 ) {
+
+		//fprintf(stderr, "Error, no hay comandos a ejecutar!\n");
+		//errno = EINVAL;
+	//	return 0;    
+//	}
+
+
 	int result = 0;
 	struct builtin_struct *function = builtin_lookup(*argv);
 

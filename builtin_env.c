@@ -3,59 +3,81 @@
 #include <unistd.h>
 #include <error.h>
 #include <errno.h>
+#include <string.h>
+
+//#include "minish.h"
 
 int builtin_getenv (int argc, char **argv) {
-    (argc < 1) ? error(1, errno, "No hay argumentos suficientes\n");
-    
-    switch (argc) {
-        case 1:
-            for (; *__environ != NULL; __environ++) {
-                printf("%s\n", *__environ);
-            }
-            break;
-        default:
-            char *env = malloc(sizeof(char));
-            for (++argv; *argv != NULL; argv++) {
-                env = getenv(*argv);
-                if (env == NULL) {
-                    fprintf(stderr, "env %s: No se encuentra definida.\n", *argv);
-                } else {
-                    printf("%s\n", env);
-                }
-            }
-            free(env);
-    }
-    exit(EXIT_SUCCESS);
+	if( argc < 1 ){
+		printf( "No hay argumentos suficientes\n");
+		return 1;
+	}
+	char *env; 
+	switch (argc) {
+		case 1:
+			for (; *__environ != NULL; __environ++) {
+				printf("%s\n", *__environ);
+			}
+			break;
+		default:
+			//env = malloc(sizeof(char));
+			for (++argv; *argv != NULL; argv++) {
+				env = strdup(getenv(*argv));
+				if (env == NULL) {
+					printf("env %s: No se encuentra definida.\n", *argv);
+				} else {
+					printf("%s\n", env);
+				}
+			}
+			free(env);
+	}
+	return EXIT_SUCCESS;
 }
 
 int builtin_setenv (int argc, char ** argv) {
-    (argc != 3) ? error(1, errno, "Cantidad de argumentos no coincide.\nUso: setenv [nombre] [valor]\n");
+	if(argc != 3){ 
+		printf( "Cantidad de argumentos no coincide.\nUso: setenv [nombre] [valor]\n");
+		return 1;
+	}
+	//    const char *env = strdup(*(++argv));
+	//    const char *val = strdup(*(++argv));
+	//
 
-    int status = setenv(*(++argv), *(++argv), 1);
+	//env = strdup(*(++argv));
+	//val = strdup(*(++argv));
 
-    if (!status) {
-        error(2, errno, "Error agregando variable de entorno.\nUso: setenv [nombre] [valor]");
-    }
+	//    printf("%s, %s\n", env, val);
+	int status = setenv(*(++argv), *(++argv), 1);
+	//int status = setenv(env, val, 1);
+	if (!status) {
+		printf( "Error agregando variable de entorno.\nUso: setenv [nombre] [valor]\n");
+		return 2;
+	}
 
-    
-    exit(EXIT_SUCCESS);
+
+	return EXIT_SUCCESS;
 }
 
 int builtin_unsetenv (int argc, char ** argv) {
-    (argc < 1) ? error(1, errno, "No hay argumentos suficientes\n");
+	/*    if (argc < 1) {
+	      printf( "No hay argumentos suficientes\n");
+	      return 1;
+	      }
+	      */
+	int status;
 
-    switch (argc) {
-        case 1:
-            error(2, errno, "No se especifican variables a eliminar.\nUso: unsetenv [var..]\n");
-            break;
-        default:
-            int status;
-            for (++argv; *argv != NULL; argv++) {
-                status = unsetenv(*argv);
-                if (!status) {
-                    fprintf(stderr, "Error al eliminar variable %s.\n", *argv);
-                }
-            }
-    }
-    exit(EXIT_SUCCESS);
+	switch (argc) {
+		case 1:
+			printf( "No se especifican variables a eliminar.\nUso: unsetenv [var..]\n");
+			return 1;
+			//break;
+		default:
+			for (++argv; *argv != NULL; argv++) {
+				status = unsetenv(*argv);
+				if (!status) {
+					fprintf(stderr, "Error al eliminar variable %s.\n", *argv);
+				}
+			}
+	}
+	return EXIT_SUCCESS;
 }

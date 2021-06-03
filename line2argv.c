@@ -11,7 +11,7 @@ line2argv(char *linea, int argc, char **argv)
 	char word[MAXWORD];
 	char *wp = word;
 	char c;
-	int word_finded;
+	int word_finded = 0;
 	
 
 	while( ((c=*linea++) != '\n') && (word_finded < argc) ){

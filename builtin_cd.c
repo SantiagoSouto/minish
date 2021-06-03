@@ -17,7 +17,8 @@ builtin_cd(int argc, char *argv[])
 
 	if (argc > 2) {
 		fprintf(stderr, "Usage: %s [dir]\n", argv[0]);
-		return EXIT_FAILURE;
+		errno = E2BIG;	
+		return errno;
 	}
 
 	if( argc == 1 ){

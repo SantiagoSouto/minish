@@ -1,4 +1,4 @@
-
+#include "minish.h"
 
 #include <stdlib.h>
 #include <errno.h>
@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 int
-builtin_pid(int argc, char *argv[])
+builtin_status(int argc, char *argv[])
 {
 	int s;
 
@@ -19,7 +19,7 @@ builtin_pid(int argc, char *argv[])
 		return errno;
 	}
 
-	printf("PID: %d\n", getpid());
+	printf("Status: %d\n", globalstatret);
 
 
 
