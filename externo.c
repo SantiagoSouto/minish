@@ -7,6 +7,8 @@
 #include <signal.h>
 #include <stdlib.h>
 
+#include "minish.h"
+
 int externo(int argc, char **argv) {
 
 
@@ -22,7 +24,8 @@ int externo(int argc, char **argv) {
 		case 0:
 			execvp(*argv, argv);
 //			fprintf(stderr, "Error al ejecutar el comando %s!\n", *argv);
-			return errno;
+			fprintf(stderr, "%s: command not found!\n", *argv);
+			exit(EXIT_FAILURE);
 		default:
 			while (wait(&wstatus) != child_process){
 				;

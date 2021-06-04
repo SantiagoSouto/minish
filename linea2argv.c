@@ -1,8 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-
 #include "minish.h"
+
+//#define MAXWORD 1024
 
 int
 linea2argv(char *linea, int argc, char **argv)
@@ -18,8 +19,16 @@ linea2argv(char *linea, int argc, char **argv)
 		if( c == ' ' && in_word) {
 			in_word = 0;
 			*wp = '\0';
-			*argv = strdup(word);
-			argv++;
+		//	wp = word;
+			if( *word != '<' && *word != '>' ){
+				*argv = strdup(word);
+				word_finded++;
+				argv++;
+			} else {
+				if( io_set(word) != 0 ){
+					return -1;	
+				} 	
+			}
 		
 		} else if( c != ' ' ) {
 			if( in_word ){
@@ -28,19 +37,23 @@ linea2argv(char *linea, int argc, char **argv)
 				wp = word;
 				*wp++ = c;
 				in_word = 1;
-				word_finded++;
 			}
 		}
 
 	}
-	if( (c == '\n') && in_word && (word_finded < argc) ) {
+	if( c == '\n' && in_word ) {
 		*wp = '\0';
-		*argv = strdup(word);
-		argv++;
-	}
-	
-	*argv = NULL;
 
+		if( *word != '<' && *word != '>' ){
+			*argv++ = strdup(word);
+			word_finded++;
+		} else {
+			if( io_set(word) != 0 ){
+				return -1;	
+			} 	
+		}
+	}
+	*argv = NULL;
 	return word_finded;
 
 }

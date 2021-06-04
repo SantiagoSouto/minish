@@ -33,16 +33,13 @@ builtin_gid(int argc, char *argv[])
 	n_gr = getgroups(MAXGROUPS, s_gid);
 
 	printf("groups=");
-	for( i = 0; i < n_gr; i++ ){
+	for( i = 0; i < n_gr-1; i++ ){
 		grp = getgrgid(s_gid[i]);
-		printf("%d(%s)", grp->gr_gid, grp->gr_name);
-		if( i+1 < n_gr ){
-			printf(",");
-		}
+		printf("%d(%s), ", grp->gr_gid, grp->gr_name);
 	}
-	printf("\n");
+	grp = getgrgid(s_gid[i]);
+	printf("%d(%s)\n", grp->gr_gid, grp->gr_name);
 	
-
 	return EXIT_SUCCESS;
 }
 

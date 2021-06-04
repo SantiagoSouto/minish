@@ -22,6 +22,11 @@
 #define HELP_GID     "gid - muestra el grupo principal y los grupos secundarios del usuario dueño del minish"
 
 
+FILE *base_stdin;
+FILE *base_stdout;
+
+int reset_in_needed = 0;
+int reset_out_needed = 0;
 int globalstatret = 0;
 struct builtin_struct builtin_arr[] = {
 { "cd", builtin_cd, HELP_CD },
@@ -36,18 +41,25 @@ struct builtin_struct builtin_arr[] = {
 {NULL, NULL, NULL}
 };
 
+char directory[MAXWORDS];
+
 void
 print_prompt(char *user)
 {
-	
-	char directory[MAXWORDS];
+	io_reset();
+	//char directory[MAXWORDS];
 	getcwd(directory, MAXWORDS);
-	fprintf(stdout, "(minish) (%s):%s > ", user, directory);
+	printf("(minish) (%s):%s> ", user, directory);
+
 }
 
 int
 main(void)
 {
+//	printf("HOLA, %d\n", fileno(stdin));
+//	base_stdin = stdin;
+//	base_stdout = stdout;
+
 	int argc, cmd_argc;
 	char *argv[MAXARG];
 	argc = MAXARG;
@@ -58,30 +70,36 @@ main(void)
 	char endstr[] = ENDSTR;
 	
 	user_name = strdup(getenv("USER"));
-	print_prompt(user_name);
+//	print_prompt(user_name);
 
-	while( fgets(line, MAXLINE, stdin) != NULL ) {
+	while( 1 ) {
+		print_prompt(user_name);
 		
+//		getcwd(directory, MAXWORDS);
+//		fprintf(stdout, "(minish) (%s):%s> ", user_name, directory);
+		if( fgets(line, MAXLINE, stdin) == NULL ){
+			break;
+		}
+
 		if( strcmp(line, endstr) == 0 ){
 			break;
 		}
 		
 		cmd_argc = linea2argv(line, argc, argv);
-		if( cmd_argc == 0 ){
-			print_prompt(user_name);
-			continue;
-		}
-		globalstatret = ejecutar(cmd_argc, argv);
+		if( cmd_argc > 0 ){
+	
+			globalstatret = ejecutar(cmd_argc, argv);
 		
-//		printf("Exit status: %d\n", globalstatret);
 		
-		if( globalstatret != 0 ){
-
+//			io_reset(argv);	
+//			printf("Exit status: %d\n", globalstatret);
+		}		
+		if( globalstatret != 0 || cmd_argc < 0){
 			fprintf(stderr, "Error with commnad %s!\n%s\n", *argv, strerror(errno));
-		
+	
+	
 		}	
-		
-		print_prompt(user_name);
+//		print_prompt(user_name);
 	}
 	
 	printf("\n");

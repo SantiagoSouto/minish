@@ -22,7 +22,8 @@
 
 // Variables
 extern int globalstatret;	// guarda status del ultimo comando - deberá definirse en el main
-
+extern FILE *base_stdin;
+extern FILE *base_stdout;
 // Funciones
 extern int builtin_exit (int argc, char ** argv);
 extern int builtin_help (int argc, char ** argv);
@@ -49,6 +50,14 @@ struct builtin_struct {         // struct con información de los builtins
 
 extern char *getcwd (char *__buf, size_t __size) __THROW __wur;
 extern int chdir (const char *__path) __THROW __nonnull ((1)) __wur;
+
+extern int reset_in_needed;
+extern int reset_out_needed;
+extern int io_set(char *fname);
+extern void io_reset();
+//extern int set_input(char *fname);
+//extern int set_output(char *fname);
+
 
 extern struct builtin_struct builtin_arr[];
 extern struct builtin_struct * builtin_lookup(char *cmd);
