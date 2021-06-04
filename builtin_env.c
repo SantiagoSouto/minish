@@ -12,15 +12,16 @@ int builtin_getenv (int argc, char **argv) {
 		printf( "No hay argumentos suficientes\n");
 		return 1;
 	}
+	char **allEnv; // when every env variable is asked
 	char *env; 
 	switch (argc) {
 		case 1:
-			for (; *__environ != NULL; __environ++) {
-				printf("%s\n", *__environ);
+			allEnv = __environ; 
+			for (; *allEnv != NULL; allEnv++) {
+				printf("%s\n", *allEnv);
 			}
 			break;
 		default:
-			//env = malloc(sizeof(char));
 			for (++argv; *argv != NULL; ++argv) {
 				env = getenv(*argv);
 				if (env == NULL) {
@@ -42,7 +43,7 @@ int builtin_setenv (int argc, char **argv) {
 	char *env = *(++argv);
 	char *val = *(++argv);
 
-	int status = setenv(env, val, 0);
+	int status = setenv(env, val, 1);
 	if (status != 0) {
 		printf( "Error agregando variable de entorno.\nUso: setenv [nombre] [valor]\n");
 		return 2;
@@ -53,11 +54,11 @@ int builtin_setenv (int argc, char **argv) {
 }
 
 int builtin_unsetenv (int argc, char ** argv) {
-	/*    if (argc < 1) {
-	      printf( "No hay argumentos suficientes\n");
-	      return 1;
-	      }
-	      */
+	if (argc < 1) {
+	    printf( "No hay argumentos suficientes\n");
+	    return 1;
+	}
+	
 	int status;
 
 	switch (argc) {
@@ -68,7 +69,7 @@ int builtin_unsetenv (int argc, char ** argv) {
 		default:
 			for (++argv; *argv != NULL; argv++) {
 				status = unsetenv(*argv);
-				if (!status) {
+				if (status != 0) {
 					fprintf(stderr, "Error al eliminar variable %s.\n", *argv);
 				}
 			}
