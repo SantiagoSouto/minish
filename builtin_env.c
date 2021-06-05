@@ -65,7 +65,6 @@ int builtin_unsetenv (int argc, char ** argv) {
 		case 1:
 			printf( "No se especifican variables a eliminar.\nUso: unsetenv [var..]\n");
 			return 1;
-			//break;
 		default:
 			for (++argv; *argv != NULL; argv++) {
 				status = unsetenv(*argv);

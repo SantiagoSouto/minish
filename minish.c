@@ -33,7 +33,7 @@ struct builtin_struct builtin_arr[] = {
 { "uid", builtin_uid, HELP_UID },
 { "pid", builtin_pid, HELP_PID },
 { "gid", builtin_gid, HELP_GID },
-	
+{ "dir", builtin_dir, HELP_DIR },
 { "status", builtin_status, HELP_STATUS },
 { "setenv", builtin_setenv, HELP_SETENV },
 { "getenv", builtin_getenv, HELP_GETENV },
