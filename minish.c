@@ -1,25 +1,4 @@
 #include "minish.h"
-#include <time.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-
-#define MAXLINE 1024
-#define ENDSTR "FIN\n"
-
-
-#define HELP_CD      "cd [..|dir] - cambia de directorio corriente"
-#define HELP_DIR     "dir [str]- muestra archivos en directorio corriente, que tengan 'str'"
-#define HELP_EXIT    "exit [status] - finaliza el minish con un status de retorno (por defecto 0)"
-#define HELP_HELP    "help [cd|dir|exit|help|history|getenv|pid|setenv|status|uid]"
-#define HELP_HISTORY "history [N] - muestra los últimos N (10) comandos escritos"
-#define HELP_GETENV  "getenv var [var] - muestra valor de variable(s) de ambiente"
-#define HELP_PID     "pid - muestra Process Id del minish"
-#define HELP_UNSETENV  "unsetenv var [var] - elimina el valor de variable de ambiente"
-#define HELP_SETENV  "setenv var valor - agrega o cambia valor de variable de ambiente"
-#define HELP_STATUS  "status - muestra status de retorno de ultimo comando ejecutado"
-#define HELP_UID     "uid - muestra nombre y número de usuario dueño del minish"
-#define HELP_GID     "gid - muestra el grupo principal y los grupos secundarios del usuario dueño del minish"
 
 
 FILE *base_stdin;
@@ -28,6 +7,7 @@ FILE *base_stdout;
 int reset_in_needed = 0;
 int reset_out_needed = 0;
 int globalstatret = 0;
+int minish_run = 1;
 
 struct stack *history = NULL;
 
@@ -42,49 +22,12 @@ struct builtin_struct builtin_arr[] = {
 { "getenv", builtin_getenv, HELP_GETENV },
 { "unsetenv", builtin_unsetenv, HELP_UNSETENV },
 { "history", builtin_history, HELP_HISTORY },
+{ "exit", builtin_exit, HELP_EXIT },
+{ "help", builtin_help, HELP_HELP },
 {NULL, NULL, NULL}
 };
 
 char directory[MAXWORDS];
-
-char *get_timestamp() {
-    
-	char *timestamp = (char *)malloc(sizeof(char));
-	time_t *current_time = malloc(sizeof(time_t));
-	time(current_time);
-	if (*current_time == ((time_t)-1))
-    {
-        (void) fprintf(stderr, "Failure to obtain the current time.\n");
-        return NULL;
-    }
-	struct tm *tm;
-	tm = localtime(current_time);
-    
-    sprintf(timestamp,"%s%04d-%02d-%02d %s%02d:%02d:%02d", "\033[0;32m", tm->tm_year+1900, tm->tm_mon, 
-    tm->tm_mday, "\033[0m", tm->tm_hour, tm->tm_min, tm->tm_sec);
-
-    if (timestamp == NULL)
-    {
-        printf("Error al convertir el tiempo a formato timestamp.\n");
-        return NULL;
-    }
-    return timestamp;
-}
-
-int save_history(char *line) {
-	char *timestamp = get_timestamp();
-	if (timestamp == NULL) {
-		return 1;
-	}
-
-	if (history == NULL) {
-		history = stack_create();
-	}
-
-	stack_push(history, timestamp, line);
-	return 0;
-
-}
 
 void print_prompt(char *user) {
 	io_reset();
@@ -109,7 +52,7 @@ int main(void) {
 	user_name = strdup(getenv("USER"));
 //	print_prompt(user_name);
 
-	while( 1 ) {
+	while(minish_run) {
 		print_prompt(user_name);
 		
 //		getcwd(directory, MAXWORDS);
@@ -140,6 +83,10 @@ int main(void) {
 	
 		}	
 //		print_prompt(user_name);
+	}
+
+	if (write_history()) {
+		exit(EXIT_FAILURE);
 	}
 	
 	printf("\n");

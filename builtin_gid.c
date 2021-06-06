@@ -1,19 +1,6 @@
 #include "minish.h"
 
-#include <stdlib.h>
-#include <errno.h>
-
-#include <unistd.h>
-#include <sys/types.h>
-#include <stdio.h>
-
-#include <grp.h>
-
-#define MAXGROUPS 100
-
-int
-builtin_gid(int argc, char *argv[])
-{
+int builtin_gid(int argc, char *argv[]) {
 	int i = 0;
 	int gid;
 	int s_gid[MAXGROUPS];

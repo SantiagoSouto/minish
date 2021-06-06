@@ -1,17 +1,6 @@
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
-#include <error.h>
-#include <errno.h>
-#include <signal.h>
-#include <stdlib.h>
-
 #include "minish.h"
 
 int externo(int argc, char **argv) {
-
-
 
 	pid_t child_process;
 

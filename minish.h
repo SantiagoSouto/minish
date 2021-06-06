@@ -2,6 +2,22 @@
 #define MAXCWD 1024         // tamaño máximo para alojar el pathname completo del directorio corriente
 #define MAXWORDS 256        // cantidad máxima de palabras en la línea
 #define HISTORY_FILE	".minish_history"   // nombre del archivo que almacena historia de comandos
+#define MAXARG 100
+#define MAXGROUPS 100
+#define ENDSTR "FIN\n"
+
+#define HELP_CD      "cd [..|dir] - cambia de directorio corriente"
+#define HELP_DIR     "dir [str]- muestra archivos en directorio corriente, que tengan 'str'"
+#define HELP_EXIT    "exit [status] - finaliza el minish con un status de retorno (por defecto 0)"
+#define HELP_HELP    "help [cd|dir|exit|help|history|getenv|pid|setenv|status|uid]"
+#define HELP_HISTORY "history [N] - muestra los últimos N (10) comandos escritos"
+#define HELP_GETENV  "getenv var [var] - muestra valor de variable(s) de ambiente"
+#define HELP_PID     "pid - muestra Process Id del minish"
+#define HELP_UNSETENV  "unsetenv var [var] - elimina el valor de variable de ambiente"
+#define HELP_SETENV  "setenv var valor - agrega o cambia valor de variable de ambiente"
+#define HELP_STATUS  "status - muestra status de retorno de ultimo comando ejecutado"
+#define HELP_UID     "uid - muestra nombre y número de usuario dueño del minish"
+#define HELP_GID     "gid - muestra el grupo principal y los grupos secundarios del usuario dueño del minish"
 
 
 #include <unistd.h>
@@ -17,8 +33,11 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <time.h>
+#include <grp.h>
 
-#define MAXARG 100
+extern int minish_run;
+
 
 // Variables
 extern int globalstatret;	// guarda status del ultimo comando - deberá definirse en el main
@@ -64,15 +83,37 @@ extern int chdir (const char *__path) __THROW __nonnull ((1)) __wur;
 
 extern int reset_in_needed;
 extern int reset_out_needed;
-extern int io_set(char *fname);
-extern void io_reset();
-//extern int set_input(char *fname);
-//extern int set_output(char *fname);
 
+/*
+*******************************************
+************* UTIL FUNCTIONS **************
+*******************************************
+*/
+
+// Coloring utils
+extern void blue_bold();
+extern void reset();
+
+// Stack utils
 extern struct stack *stack_create();
 extern struct stack *stack_push(struct stack *s, char *timestamp, char *word);
 extern void stack_free(struct stack *s);
 extern void stack_print(struct stack *s);
+
+// In/Out utils
+extern void reset_out();
+extern void reset_in();
+extern int io_set(char *fname);
+extern void io_reset();
+extern int set_in(char *fname, char *tp);
+extern int set_out(char *fname, char *tp);
+
+// History utils
+extern char *get_timestamp();
+extern int save_history(char *line);
+extern int write_history();
+
+
 
 
 extern struct stack *history;
@@ -99,14 +140,5 @@ extern struct builtin_struct * builtin_lookup(char *cmd);
     Lo lógico sería que estuvieran definidas en el mismo fuente que define el array builtin_arr
     en lugar de estar en este archivo .h.
 
-#define HELP_CD      "cd [..|dir] - cambia de directorio corriente"
-#define HELP_DIR     "dir [str]- muestra archivos en directorio corriente, que tengan 'str'"
-#define HELP_EXIT    "exit [status] - finaliza el minish con un status de retorno (por defecto 0)"
-#define HELP_HELP    "help [cd|dir|exit|help|history|getenv|pid|setenv|status|uid]"
-#define HELP_HISTORY "history [N] - muestra los últimos N (10) comandos escritos"
-#define HELP_GETENV  "getenv var [var] - muestra valor de variable(s) de ambiente"
-#define HELP_PID     "pid - muestra Process Id del minish"
-#define HELP_SETENV  "setenv var valor - agrega o cambia valor de variable de ambiente"
-#define HELP_STATUS  "status - muestra status de retorno de ultimo comando ejecutado"
-#define HELP_UID     "uid - muestra nombre y número de usuario dueño del minish"
 */
+

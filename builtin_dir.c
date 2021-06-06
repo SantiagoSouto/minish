@@ -7,14 +7,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-void blue() {
-  printf("\033[1;34m");
-}
-
-void reset() {
-  printf("\033[0m");
-}
-
 void _ls(char *route, int opt_l, int opt_a) {
     DIR *d;
     struct dirent *dir;
@@ -24,7 +16,7 @@ void _ls(char *route, int opt_l, int opt_a) {
         if (dir->d_ino != 0) {
             if (opt_a || dir->d_name[0] != '.') {
                 if (dir->d_type == DT_DIR) {
-                    blue();
+                    blue_bold();
                 }
                 printf("%s\t", dir->d_name);
                 reset();

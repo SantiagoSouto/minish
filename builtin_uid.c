@@ -1,9 +1,4 @@
-
-#include <pwd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <errno.h>
+#include "minish.h"
 
 int
 builtin_uid(int argc, char *argv[])
