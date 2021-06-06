@@ -5,9 +5,7 @@
 
 
 
-extern struct builtin_struct 
-*builtin_lookup(char *cmd)
-{
+extern struct builtin_struct *builtin_lookup(char *cmd) {
 
 	extern struct builtin_struct builtin_arr[];
 	struct builtin_struct *result = builtin_arr;

@@ -25,26 +25,37 @@ extern int globalstatret;	// guarda status del ultimo comando - deberá definirs
 extern FILE *base_stdin;
 extern FILE *base_stdout;
 // Funciones
-extern int builtin_exit (int argc, char ** argv);
-extern int builtin_help (int argc, char ** argv);
-extern int builtin_history (int argc, char ** argv);
-extern int builtin_status (int argc, char ** argv);
-extern int builtin_cd (int argc, char ** argv);
-extern int builtin_dir (int argc, char ** argv);
-extern int builtin_getenv (int argc, char ** argv);
-extern int builtin_gid (int argc, char ** argv);
-extern int builtin_setenv (int argc, char ** argv);
-extern int builtin_pid (int argc, char ** argv);
-extern int builtin_uid (int argc, char ** argv);
-extern int builtin_unsetenv (int argc, char ** argv);
-extern int ejecutar (int argc, char ** argv);
-extern int externo (int argc, char ** argv);
+extern int builtin_exit (int argc, char **argv);
+extern int builtin_help (int argc, char **argv);
+extern int builtin_history (int argc, char **argv);
+extern int builtin_status (int argc, char **argv);
+extern int builtin_cd (int argc, char **argv);
+extern int builtin_dir (int argc, char **argv);
+extern int builtin_getenv (int argc, char **argv);
+extern int builtin_gid (int argc, char **argv);
+extern int builtin_setenv (int argc, char **argv);
+extern int builtin_pid (int argc, char **argv);
+extern int builtin_uid (int argc, char **argv);
+extern int builtin_unsetenv (int argc, char **argv);
+extern int ejecutar (int argc, char **argv);
+extern int externo (int argc, char **argv);
 extern int linea2argv(char *linea, int argc, char **argv);
 
 struct builtin_struct {         // struct con información de los builtins
     char *cmd;                  // nombre del comando builtin
     int (*func) (int, char **); // la función que lo ejecuta
     char *help_txt;             // el texto de ayuda
+};
+
+struct stack {
+    int count;
+    struct stacknode *last;
+};
+
+struct stacknode {
+    char *timestamp;
+    char *word;
+    struct stacknode *prev;
 };
 
 
@@ -58,7 +69,13 @@ extern void io_reset();
 //extern int set_input(char *fname);
 //extern int set_output(char *fname);
 
+extern struct stack *stack_create();
+extern struct stack *stack_push(struct stack *s, char *timestamp, char *word);
+extern void stack_free(struct stack *s);
+extern void stack_print(struct stack *s);
 
+
+extern struct stack *history;
 extern struct builtin_struct builtin_arr[];
 extern struct builtin_struct * builtin_lookup(char *cmd);
 /*

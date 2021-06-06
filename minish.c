@@ -1,5 +1,5 @@
 #include "minish.h"
-
+#include <time.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -28,6 +28,9 @@ FILE *base_stdout;
 int reset_in_needed = 0;
 int reset_out_needed = 0;
 int globalstatret = 0;
+
+struct stack *history = NULL;
+
 struct builtin_struct builtin_arr[] = {
 { "cd", builtin_cd, HELP_CD },
 { "uid", builtin_uid, HELP_UID },
@@ -38,24 +41,59 @@ struct builtin_struct builtin_arr[] = {
 { "setenv", builtin_setenv, HELP_SETENV },
 { "getenv", builtin_getenv, HELP_GETENV },
 { "unsetenv", builtin_unsetenv, HELP_UNSETENV },
+{ "history", builtin_history, HELP_HISTORY },
 {NULL, NULL, NULL}
 };
 
 char directory[MAXWORDS];
 
-void
-print_prompt(char *user)
-{
+char *get_timestamp() {
+    
+	char *timestamp = (char *)malloc(sizeof(char));
+	time_t *current_time = malloc(sizeof(time_t));
+	time(current_time);
+	if (*current_time == ((time_t)-1))
+    {
+        (void) fprintf(stderr, "Failure to obtain the current time.\n");
+        return NULL;
+    }
+	struct tm *tm;
+	tm = localtime(current_time);
+    
+    sprintf(timestamp,"%s%04d-%02d-%02d %s%02d:%02d:%02d", "\033[0;32m", tm->tm_year+1900, tm->tm_mon, 
+    tm->tm_mday, "\033[0m", tm->tm_hour, tm->tm_min, tm->tm_sec);
+
+    if (timestamp == NULL)
+    {
+        printf("Error al convertir el tiempo a formato timestamp.\n");
+        return NULL;
+    }
+    return timestamp;
+}
+
+int save_history(char *line) {
+	char *timestamp = get_timestamp();
+	if (timestamp == NULL) {
+		return 1;
+	}
+
+	if (history == NULL) {
+		history = stack_create();
+	}
+
+	stack_push(history, timestamp, line);
+	return 0;
+
+}
+
+void print_prompt(char *user) {
 	io_reset();
 	//char directory[MAXWORDS];
 	getcwd(directory, MAXWORDS);
 	printf("(minish) (%s):%s> ", user, directory);
-
 }
 
-int
-main(void)
-{
+int main(void) {
 //	printf("HOLA, %d\n", fileno(stdin));
 //	base_stdin = stdin;
 //	base_stdout = stdout;
@@ -63,7 +101,6 @@ main(void)
 	int argc, cmd_argc;
 	char *argv[MAXARG];
 	argc = MAXARG;
-
 
 	char *user_name; 
 	char line[MAXLINE];
@@ -85,6 +122,9 @@ main(void)
 			break;
 		}
 		
+		if (save_history(line)) {
+			exit(EXIT_FAILURE);
+		}
 		cmd_argc = linea2argv(line, argc, argv);
 		if( cmd_argc > 0 ){
 	
