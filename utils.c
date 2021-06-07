@@ -40,12 +40,7 @@ struct stack *stack_push(struct stack *s, char *cmd) {
 	  s = stack_create();
   }
 
-  if (s->count == 0) {
-    node->prev = NULL;
-  } else {
-    node->prev = s->last;
-  }
-
+  node->prev = s->last;
   s->last = node;
   (s->count)++;
   
@@ -227,7 +222,7 @@ char *get_timestamp() {
 	time(current_time);
 	if (*current_time == ((time_t)-1))
     {
-        (void) fprintf(stderr, "Failure to obtain the current time.\n");
+        fprintf(stderr, "Failure to obtain the current time.\n");
         return NULL;
     }
 	struct tm *tm;
@@ -241,6 +236,8 @@ char *get_timestamp() {
         printf("Error al convertir el tiempo a formato timestamp.\n");
         return NULL;
     }
+	free(current_time);
+	free(tm);
     return timestamp;
 }
 
@@ -254,17 +251,19 @@ int save_history(char *line) {
 		history = stack_create();
 	}
 
-	char *cmd = malloc(sizeof(char));
-	sprintf(cmd, "%s:  %s%s", timestamp, "\033[0;34m", line);
+	char *cmd = malloc(sizeof(char)*MAXWORDS);
+	snprintf(cmd, MAXWORDS, "%s:  %s%s", timestamp, "\033[0;34m", line);
 
-	stack_push(history, cmd);
+	history = stack_push(history, cmd);
+	free(timestamp);
+	free(cmd);
 	return 0;
 
 }
 
 int write_history() {
-    char *pathname = malloc(sizeof(char));
-    sprintf(pathname, "/home/%s/.minish_history", getenv("USER"));
+    char *pathname = malloc(sizeof(char)*MAXWORDS);
+    snprintf(pathname, MAXWORDS, "/home/%s/.minish_history", getenv("USER"));
 
     FILE *hist = fopen(pathname, "w");
 
@@ -273,31 +272,39 @@ int write_history() {
         return 1;             
     }
 
-    for (struct stacknode *n = history->last; n != NULL; n = n->prev) {
+	struct stack *temp = stack_create();
+    for (struct stacknode *node = history->last; node != NULL; node = node->prev) {
+        temp = stack_push(temp, node->cmd);
+    }
+
+    for (struct stacknode *n = temp->last; n != NULL; n = n->prev) {
         fprintf(hist, "%s", n->cmd);
     }
 
     fclose(hist);
+	stack_free(temp);
     stack_free(history);
+	free(pathname);
     return 0;
 }
 
 int get_history() {
-	char *pathname = malloc(sizeof(char));
-    sprintf(pathname, "/home/%s/.minish_history", getenv("USER"));
+	char *pathname = malloc(sizeof(char)*MAXWORDS);
+    snprintf(pathname, MAXWORDS, "/home/%s/.minish_history", getenv("USER"));
 
     FILE *hist = fopen(pathname, "r");
 
-	if (hist == NULL) {
-        printf("Error abriendo .minish_history");   
-        return 1;             
+	if (hist == NULL) {   
+        return 0;             
     }
 
 	char line[MAXLINE];
 
 	while (fgets(line, MAXLINE, hist) != NULL) {
-		stack_push(history, line);
+		history = stack_push(history, line);
 	}
+	fclose(hist);
+	free(pathname);
 	return 0;
 }
 

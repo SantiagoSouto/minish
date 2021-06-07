@@ -26,9 +26,8 @@ int builtin_history(int argc, char **argv) {
 
     if (history != NULL) {
         struct stack *temp = stack_create();
-        for (struct stacknode *node = history->last; n > 0 && node != NULL; n--) {
+        for (struct stacknode *node = history->last; n > 0 && node != NULL; n--, node = node->prev) {
             stack_push(temp, node->cmd);
-            node = node->prev;
         }
         stack_print(temp);
         stack_free(temp);
