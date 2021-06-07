@@ -236,8 +236,6 @@ char *get_timestamp() {
         printf("Error al convertir el tiempo a formato timestamp.\n");
         return NULL;
     }
-	free(current_time);
-	free(tm);
     return timestamp;
 }
 
