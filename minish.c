@@ -41,6 +41,10 @@ int main(void) {
 //	base_stdin = stdin;
 //	base_stdout = stdout;
 
+	if (get_history()) {
+		exit(EXIT_FAILURE);
+	}
+
 	int argc, cmd_argc;
 	char *argv[MAXARG];
 	argc = MAXARG;

@@ -1,9 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <error.h>
-#include <errno.h>
-#include <string.h>
 #include "minish.h"
 #define DEFAULT 10
 
@@ -33,11 +27,14 @@ int builtin_history(int argc, char **argv) {
     if (history != NULL) {
         struct stack *temp = stack_create();
         for (struct stacknode *node = history->last; n > 0 && node != NULL; n--) {
-            stack_push(temp, node->timestamp, node->word);
+            stack_push(temp, node->cmd);
             node = node->prev;
         }
         stack_print(temp);
         stack_free(temp);
+    } else {
+        char *pathname = malloc(sizeof(char));
+        sprintf(pathname, "/home/%s/.minish_history", getenv("USER"));
     }
 
     return EXIT_SUCCESS;

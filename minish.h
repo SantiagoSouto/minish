@@ -72,8 +72,7 @@ struct stack {
 };
 
 struct stacknode {
-    char *timestamp;
-    char *word;
+    char *cmd;
     struct stacknode *prev;
 };
 
@@ -96,7 +95,7 @@ extern void reset();
 
 // Stack utils
 extern struct stack *stack_create();
-extern struct stack *stack_push(struct stack *s, char *timestamp, char *word);
+extern struct stack *stack_push(struct stack *s, char *cmd);
 extern void stack_free(struct stack *s);
 extern void stack_print(struct stack *s);
 
@@ -112,6 +111,7 @@ extern int set_out(char *fname, char *tp);
 extern char *get_timestamp();
 extern int save_history(char *line);
 extern int write_history();
+extern int get_history();
 
 
 
