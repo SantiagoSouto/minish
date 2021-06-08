@@ -120,7 +120,7 @@ extern int get_history(struct list *l, int n);
 
 extern struct list *history;
 extern struct builtin_struct builtin_arr[];
-extern struct builtin_struct * builtin_lookup(char *cmd);
+extern struct builtin_struct *builtin_lookup(char *cmd);
 /*
     builtin_arr es una lista de los builtins, que se recorrerá en forma lineal.
     Podría usarse una estructura que mejorara la velocidad de búsqueda, pero
