@@ -317,3 +317,23 @@ int get_history(struct list *l, int n) {
 *******************************************
 */
 
+int key_pressed(){
+  	int result = 0;
+  	int c;
+  	/* use system call to make terminal send all keystrokes directly to stdin */
+  	system ("/bin/stty raw");
+  	if ((c=getchar()) == 27) {
+    	getchar();
+    	switch(getchar()) { // the real value
+      		case 'A':
+        	result = 2;
+        	break;
+      	case 'B':
+        	result = 3;
+        	break;
+    	}
+  	}
+  	/* use system call to set terminal behaviour to more normal behaviour */
+  	system ("/bin/stty cooked");
+  	return result;
+}
