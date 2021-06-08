@@ -23,40 +23,51 @@ void reset() {
 */
 
 
-// crea un stack vacío, retorna puntero al mismo
-struct stack *stack_create() {
-  struct stack *stack = (struct stack *) malloc(sizeof(struct stack));
-  stack->count = 0;
-  stack->last = NULL;
-  return stack;
+// crea una lista vacía, retorna puntero a la misma
+struct list *list_create() {
+  struct list *list = (struct list *) malloc(sizeof(struct list));
+  list->count = 0;
+  list->first = NULL;
+  list->last = NULL;
+  return list;
 }
 
-// inserta una palabra al final del stack s, retorna el puntero al stack
-struct stack *stack_push(struct stack *s, char *cmd) {
-  struct stacknode *node = (struct stacknode *) malloc(sizeof(struct stacknode));
+// inserta una palabra al final de la lista l, retorna el puntero a la lista
+struct list *list_push(struct list *l, char *cmd) {
+  struct listnode *node = (struct listnode *) malloc(sizeof(struct listnode));
   node->cmd = strdup(cmd);
+  node->next = NULL;
 
-  if (s == NULL) {
-	  s = stack_create();
+  if (l == NULL) {
+	  l = list_create();
+  }
+  
+  if (l->count == 0) {
+	  node->prev = NULL;
+	  l->first = node;
+	  l->last = node;
+	  (l->count)++;
+	  return l;
   }
 
-  node->prev = s->last;
-  s->last = node;
-  (s->count)++;
+  node->prev = l->last;
+  l->last->next = node;
+  l->last = node;
+  (l->count)++;
   
-  return s;
+  return l;
 }
 
-void stack_free(struct stack *s) {
-  struct stacknode *node = s->last;
-  for (; node->prev != NULL; node = node->prev) {
+void list_free(struct list *l) {
+  struct listnode *node = l->first;
+  for (; node != NULL; node = node->next) {
     free(node->cmd);
   }
-  free(s);
+  free(l);
 }
 
-void stack_print(struct stack *s) {
-  for (struct stacknode *n = s->last; n != NULL; n = n->prev) {
+void list_print(struct list *l) {
+  for (struct listnode *n = l->last; n != NULL; n = n->prev) {
     printf("%s", n->cmd);
   }
   reset();
@@ -246,13 +257,13 @@ int save_history(char *line) {
 	}
 
 	if (history == NULL) {
-		history = stack_create();
+		history = list_create();
 	}
 
 	char *cmd = malloc(sizeof(char)*MAXWORDS);
 	snprintf(cmd, MAXWORDS, "%s:  %s%s", timestamp, "\033[0;34m", line);
 
-	history = stack_push(history, cmd);
+	history = list_push(history, cmd);
 	free(timestamp);
 	free(cmd);
 	return 0;
@@ -263,30 +274,23 @@ int write_history() {
     char *pathname = malloc(sizeof(char)*MAXWORDS);
     snprintf(pathname, MAXWORDS, "/home/%s/.minish_history", getenv("USER"));
 
-    FILE *hist = fopen(pathname, "w");
+    FILE *hist = fopen(pathname, "r+");
 
     if (hist == NULL) {
-        printf("Error abriendo .minish_history");   
-        return 1;             
+        hist = fopen(pathname, "w");             
     }
 
-	struct stack *temp = stack_create();
-    for (struct stacknode *node = history->last; node != NULL; node = node->prev) {
-        temp = stack_push(temp, node->cmd);
-    }
-
-    for (struct stacknode *n = temp->last; n != NULL; n = n->prev) {
-        fprintf(hist, "%s", n->cmd);
+    for (struct listnode *node = history->last; node != NULL; node = node->prev) {
+        fprintf(hist, "%s", node->cmd);
     }
 
     fclose(hist);
-	stack_free(temp);
-    stack_free(history);
+    list_free(history);
 	free(pathname);
     return 0;
 }
 
-int get_history() {
+int get_history(struct list *l, int n) {
 	char *pathname = malloc(sizeof(char)*MAXWORDS);
     snprintf(pathname, MAXWORDS, "/home/%s/.minish_history", getenv("USER"));
 
@@ -298,8 +302,8 @@ int get_history() {
 
 	char line[MAXLINE];
 
-	while (fgets(line, MAXLINE, hist) != NULL) {
-		history = stack_push(history, line);
+	while (fgets(line, MAXLINE, hist) != NULL && n-- > 0) {
+		l = list_push(l, line);
 	}
 	fclose(hist);
 	free(pathname);

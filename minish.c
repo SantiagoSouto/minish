@@ -9,7 +9,7 @@ int reset_out_needed = 0;
 int globalstatret = 0;
 int minish_run = 1;
 
-struct stack *history = NULL;
+struct list *history = NULL;
 
 struct builtin_struct builtin_arr[] = {
 { "cd", builtin_cd, HELP_CD },
@@ -41,10 +41,6 @@ int main(void) {
 //	base_stdin = stdin;
 //	base_stdout = stdout;
 
-	if (get_history()) {
-		exit(EXIT_FAILURE);
-	}
-
 	int argc, cmd_argc;
 	char *argv[MAXARG];
 	argc = MAXARG;
@@ -61,11 +57,11 @@ int main(void) {
 		
 //		getcwd(directory, MAXWORDS);
 //		fprintf(stdout, "(minish) (%s):%s> ", user_name, directory);
-		if( fgets(line, MAXLINE, stdin) == NULL ){
+		if(fgets(line, MAXLINE, stdin) == NULL) {
 			break;
 		}
 
-		if( strcmp(line, endstr) == 0 ){
+		if(strcmp(line, endstr) == 0) {
 			break;
 		}
 		
@@ -73,7 +69,7 @@ int main(void) {
 			exit(EXIT_FAILURE);
 		}
 		cmd_argc = linea2argv(line, argc, argv);
-		if( cmd_argc > 0 ){
+		if(cmd_argc > 0) {
 	
 			globalstatret = ejecutar(cmd_argc, argv);
 		
@@ -81,7 +77,7 @@ int main(void) {
 //			io_reset(argv);	
 //			printf("Exit status: %d\n", globalstatret);
 		}		
-		if( globalstatret != 0 || cmd_argc < 0){
+		if(globalstatret != 0 || cmd_argc < 0) {
 			fprintf(stderr, "Error with commnad %s!\n%s\n", *argv, strerror(errno));
 	
 	

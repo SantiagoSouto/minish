@@ -1,6 +1,10 @@
 #include "minish.h"
 
 int externo(int argc, char **argv) {
+	if( argc < 1 ){
+		printf( "No hay argumentos suficientes\n");
+		return 1;
+	}
 
 	pid_t child_process;
 

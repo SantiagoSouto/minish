@@ -6,7 +6,7 @@ int builtin_history(int argc, char **argv) {
 		printf( "No hay argumentos suficientes\n");
 		return 1;
 	}
-    extern struct stack *history;
+    extern struct list *history;
     int n = DEFAULT;
 
     switch (argc) {
@@ -23,18 +23,23 @@ int builtin_history(int argc, char **argv) {
             printf("Solo un argumento es aceptado.\nUso: history [-n]\n");
             return 1;
     }
+    
+    struct list *temp = list_create();
 
     if (history != NULL) {
-        struct stack *temp = stack_create();
-        for (struct stacknode *node = history->last; n > 0 && node != NULL; n--, node = node->prev) {
-            stack_push(temp, node->cmd);
+        int left = n - (history->count);
+
+        for (struct listnode *node = history->last; n > 0 && node != NULL; n--, node = node->prev) {
+            list_push(temp, node->cmd);
         }
-        stack_print(temp);
-        stack_free(temp);
+        if (left >= 0) {
+            get_history(temp, left);
+        }
     } else {
-        char *pathname = malloc(sizeof(char));
-        sprintf(pathname, "/home/%s/.minish_history", getenv("USER"));
+        get_history(temp, n);
     }
+    list_print(temp);
+    list_free(temp);
 
     return EXIT_SUCCESS;
 }

@@ -66,14 +66,16 @@ struct builtin_struct {         // struct con información de los builtins
     char *help_txt;             // el texto de ayuda
 };
 
-struct stack {
+struct list {
     int count;
-    struct stacknode *last;
+    struct listnode *first;
+    struct listnode *last;
 };
 
-struct stacknode {
+struct listnode {
     char *cmd;
-    struct stacknode *prev;
+    struct listnode *next;
+    struct listnode *prev;
 };
 
 
@@ -94,10 +96,10 @@ extern void blue_bold();
 extern void reset();
 
 // Stack utils
-extern struct stack *stack_create();
-extern struct stack *stack_push(struct stack *s, char *cmd);
-extern void stack_free(struct stack *s);
-extern void stack_print(struct stack *s);
+extern struct list *list_create();
+extern struct list *list_push(struct list *l, char *cmd);
+extern void list_free(struct list *l);
+extern void list_print(struct list *l);
 
 // In/Out utils
 extern void reset_out();
@@ -111,12 +113,12 @@ extern int set_out(char *fname, char *tp);
 extern char *get_timestamp();
 extern int save_history(char *line);
 extern int write_history();
-extern int get_history();
+extern int get_history(struct list *l, int n);
 
 
 
 
-extern struct stack *history;
+extern struct list *history;
 extern struct builtin_struct builtin_arr[];
 extern struct builtin_struct * builtin_lookup(char *cmd);
 /*
