@@ -10,6 +10,7 @@ int globalstatret = 0;
 int minish_run = 1;
 
 struct list *history = NULL;
+struct listnode *use_cmd = NULL;
 
 struct builtin_struct builtin_arr[] = {
 { "cd", builtin_cd, HELP_CD },
@@ -45,8 +46,10 @@ int main(void) {
 	char *argv[MAXARG];
 	argc = MAXARG;
 
+	// char *cmd_temp;
+
 	char *user_name; 
-	char line[MAXLINE];
+	char *line = malloc(sizeof(char) * MAXLINE);
 	char endstr[] = ENDSTR;
 	
 	user_name = strdup(getenv("USER"));
@@ -54,10 +57,31 @@ int main(void) {
 
 	while(minish_run) {
 		print_prompt(user_name);
-		
+		/*
+		if ((arrow_pressed = key_pressed_or_getc(line)) == 2) {
+			if (history != NULL) {
+				if (use_cmd == NULL) {
+					use_cmd = history->last;
+					cmd_temp = strdup(use_cmd->cmd);
+				} else {
+					if (use_cmd->prev != NULL) {
+						cmd_temp = strdup(use_cmd->prev->cmd);
+					} else {
+						break;
+					}
+				}
+				cmd_temp += 32;
+				fflush(stdin);
+				while (*(++cmd_temp) != '\n') {
+					putchar(*cmd_temp);
+				}
+				reset();
+			}
+		}
+		*/		
 //		getcwd(directory, MAXWORDS);
 //		fprintf(stdout, "(minish) (%s):%s> ", user_name, directory);
-		if(fgets(line, MAXLINE, stdin) == NULL) {
+		if(fgets(++line, MAXLINE, stdin) == NULL) {
 			break;
 		}
 

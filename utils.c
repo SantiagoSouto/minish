@@ -326,13 +326,18 @@ int key_pressed(){
     	getchar();
     	switch(getchar()) { // the real value
       		case 'A':
-        	result = 2;
-        	break;
-      	case 'B':
-        	result = 3;
-        	break;
+	        	result = 2;
+        		break;
+      		case 'B':
+        		result = 3;
+        		break;
+			default:
+				result = 1;
+				break;
     	}
-  	}
+  	} else {
+		ungetc(c, stdin);
+	}
   	/* use system call to set terminal behaviour to more normal behaviour */
   	system ("/bin/stty cooked");
   	return result;

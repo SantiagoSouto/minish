@@ -115,10 +115,14 @@ extern int save_history(char *line);
 extern int write_history();
 extern int get_history(struct list *l, int n);
 
+// Arrows utils
+extern int key_pressed();
+
 
 
 
 extern struct list *history;
+extern struct listnode *use_cmd;
 extern struct builtin_struct builtin_arr[];
 extern struct builtin_struct *builtin_lookup(char *cmd);
 /*
