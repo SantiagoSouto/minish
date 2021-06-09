@@ -351,6 +351,9 @@ int key_pressed(){
 				result = 1;
 				break;
     	}
+		putchar('\b');
+		putchar('\b');
+		putchar('\b');
   	} else {
 		ungetc(c, stdin);
 	}

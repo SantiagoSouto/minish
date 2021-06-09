@@ -49,7 +49,7 @@ int main(void) {
 	// char *cmd_temp;
 
 	char *user_name; 
-	char *line = malloc(sizeof(char) * MAXLINE);
+	char line[MAXLINE];
 	char endstr[] = ENDSTR;
 	
 	user_name = strdup(getenv("USER"));
@@ -58,7 +58,7 @@ int main(void) {
 	while(minish_run) {
 		print_prompt(user_name);
 		/*
-		if ((arrow_pressed = key_pressed_or_getc(line)) == 2) {
+		if ((arrow_pressed = key_pressed()) == 2) {
 			if (history != NULL) {
 				if (use_cmd == NULL) {
 					use_cmd = history->last;
@@ -71,17 +71,16 @@ int main(void) {
 					}
 				}
 				cmd_temp += 32;
-				fflush(stdin);
 				while (*(++cmd_temp) != '\n') {
 					putchar(*cmd_temp);
 				}
 				reset();
 			}
 		}
-		*/		
+		*/	
 //		getcwd(directory, MAXWORDS);
 //		fprintf(stdout, "(minish) (%s):%s> ", user_name, directory);
-		if(fgets(++line, MAXLINE, stdin) == NULL) {
+		if(fgets(line, MAXLINE, stdin) == NULL) {
 			break;
 		}
 
