@@ -140,6 +140,14 @@ void io_reset() {
 
 
 int set_out(char *fname, char *tp) {
+	FILE *fp;
+	if( (fp=fopen(fname, tp)) == NULL ){
+		return errno;
+	} else{
+		fclose(fp);
+	}
+
+
 	fflush(stdout);
 	fgetpos(stdout, &pos_out);
 	fd_out = dup(fileno(stdout));
@@ -152,6 +160,14 @@ int set_out(char *fname, char *tp) {
 
 
 int set_in(char *fname, char *tp) {
+
+	FILE *fp;
+	if( (fp=fopen(fname, tp)) == NULL ){
+		return errno;
+	} else{
+		fclose(fp);
+	}
+
 	fflush(stdin);
 	fgetpos(stdin, &pos_in);
 	fd_in = dup(fileno(stdin));
