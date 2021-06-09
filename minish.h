@@ -116,9 +116,6 @@ extern int save_history(char *line);
 extern int write_history();
 extern int get_history(struct list *l, int n);
 
-// Arrows utils
-extern int key_pressed();
-
 
 
 

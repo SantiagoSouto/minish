@@ -325,39 +325,3 @@ int get_history(struct list *l, int n) {
 	free(pathname);
 	return 0;
 }
-
-
-/*
-*******************************************
-*************** ARROWS UTILS **************
-*******************************************
-*/
-
-int key_pressed(){
-  	int result = 0;
-  	int c;
-  	/* use system call to make terminal send all keystrokes directly to stdin */
-  	system ("/bin/stty raw");
-  	if ((c=getchar()) == 27) {
-    	getchar();
-    	switch(getchar()) { // the real value
-      		case 'A':
-	        	result = 2;
-        		break;
-      		case 'B':
-        		result = 3;
-        		break;
-			default:
-				result = 1;
-				break;
-    	}
-		putchar('\b');
-		putchar('\b');
-		putchar('\b');
-  	} else {
-		ungetc(c, stdin);
-	}
-  	/* use system call to set terminal behaviour to more normal behaviour */
-  	system ("/bin/stty cooked");
-  	return result;
-}
