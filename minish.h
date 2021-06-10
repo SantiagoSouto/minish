@@ -116,6 +116,11 @@ extern int save_history(char *line);
 extern int write_history();
 extern int get_history(struct list *l, int n);
 
+// Signal utils
+extern void interrupt_ctrl_c();
+extern void exit_status();
+
+
 
 
 
