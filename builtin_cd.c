@@ -1,4 +1,4 @@
-
+#include "minish.h"
 
 #include <stdlib.h>
 #include <errno.h>
@@ -11,10 +11,15 @@
 int
 builtin_cd(int argc, char *argv[])
 {
+	int status;
 	int result;
 	char *dir;
-	char back[] = "../";
-
+	char oldpwd[MAXWORDS];
+	char directory[MAXWORDS];
+	char *o_pwd;
+	o_pwd = oldpwd;
+	o_pwd = strdup(getenv("OLDPWD"));
+	
 	if (argc > 2) {
 		fprintf(stderr, "Usage: %s [dir]\n", argv[0]);
 		errno = E2BIG;	
@@ -27,14 +32,26 @@ builtin_cd(int argc, char *argv[])
 
 	if( argc == 2 ){
 		if( strcmp("-", *(argv+1)) == 0 ){
-			dir = back;
+			dir = o_pwd;
 		} else{
 			dir = *(argv+1);
 		}
 	}
 
-	result = chdir(dir);	
 
+	
+	status = setenv("OLDPWD", getcwd(directory, MAXWORDS), 1);
+	if (status != 0) {
+		return errno;
+	}
+
+
+	result = chdir(dir);	
+	
+	status = setenv("PWD", getcwd(directory, MAXWORDS), 1);
+	if (status != 0) {
+		return errno;
+	}
 
 	return result;
 }
