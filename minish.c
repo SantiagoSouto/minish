@@ -42,6 +42,8 @@ int main(void) {
 //	base_stdin = stdin;
 //	base_stdout = stdout;
 
+	signal(SIGINT, interrupt_ctrl_c);
+
 	int argc, cmd_argc;
 	char *argv[MAXARG];
 	argc = MAXARG;
@@ -84,7 +86,7 @@ int main(void) {
 			fprintf(stderr, "Error with commnad %s!\n%s\n", *argv, strerror(errno));
 	
 	
-		}	
+		}
 //		print_prompt(user_name);
 	}
 
@@ -92,7 +94,7 @@ int main(void) {
 		exit(EXIT_FAILURE);
 	}
 	
-	printf("\n");
+	exit_status();
 	exit(EXIT_SUCCESS);
 
 }

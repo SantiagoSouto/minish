@@ -325,3 +325,19 @@ int get_history(struct list *l, int n) {
 	free(pathname);
 	return 0;
 }
+
+
+/*
+*******************************************
+*************** SIGNAL UTILS **************
+*******************************************
+*/
+
+void interrupt_ctrl_c() {
+	fprintf(stderr, "Linea cancelada.\nVuelva a escribir el comando deseado: > ");
+}
+
+void exit_status() {
+	fprintf(stderr, "Exiting...\n");
+	builtin_status(1, NULL);
+}
