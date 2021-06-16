@@ -6,7 +6,7 @@ builtin_uid(int argc, char *argv[])
 	struct passwd pwd;
 	struct passwd *result;
 	char *buf;
-	size_t bufsize;
+	int bufsize;
 	int s;
 
 	if (argc != 1) {

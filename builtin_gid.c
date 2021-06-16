@@ -2,8 +2,8 @@
 
 int builtin_gid(int argc, char *argv[]) {
 	int i = 0;
-	int gid;
-	int s_gid[MAXGROUPS];
+	//int gid;
+	unsigned int s_gid[MAXGROUPS];
 	int n_gr = 0;
 	struct group *grp;
 
