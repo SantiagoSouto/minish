@@ -1,5 +1,3 @@
-
-
 #include <stdlib.h>
 #include <errno.h>
 
@@ -11,7 +9,8 @@ int
 builtin_pid(int argc, char *argv[])
 {
 	int s;
-
+	
+	//Chequea cantidad correcta de argumnetos
 	if (argc != 1) {
 		fprintf(stderr, "Usage: %s\n", argv[0]);
 	
@@ -19,6 +18,7 @@ builtin_pid(int argc, char *argv[])
 		return errno;
 	}
 
+	//Obtiene el pid
 	printf("PID: %d\n", getpid());
 
 

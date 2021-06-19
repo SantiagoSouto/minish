@@ -2,7 +2,6 @@
 
 int builtin_gid(int argc, char *argv[]) {
 	int i = 0;
-	//int gid;
 	unsigned int s_gid[MAXGROUPS];
 	int n_gr = 0;
 	struct group *grp;
@@ -12,11 +11,12 @@ int builtin_gid(int argc, char *argv[]) {
 		errno = E2BIG;
 		return errno;
 	}
-
+	//Resuelve el grupo principal del usuario
 	grp = getgrgid(getgid());
 
 	printf("gid=%d(%s) ", grp->gr_gid, grp->gr_name);
 	
+	//Resuelve la cantidad de grupos secundarios del usuario y los imprime a toods
 	n_gr = getgroups(MAXGROUPS, s_gid);
 
 	printf("groups=");

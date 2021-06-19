@@ -27,20 +27,17 @@ struct builtin_struct builtin_arr[] = {
 { "help", builtin_help, HELP_HELP },
 {NULL, NULL, NULL}
 };
-
+//Varibale para guardar el directorio local
 char directory[MAXWORDS];
 
+//Resetea el stdout y stdin e imprime el prompt
 void print_prompt(char *user) {
 	io_reset();
-	//char directory[MAXWORDS];
 	getcwd(directory, MAXWORDS);
 	printf("(minish) (%s):%s> ", user, directory);
 }
 
 int main(void) {
-//	printf("HOLA, %d\n", fileno(stdin));
-//	base_stdin = stdin;
-//	base_stdout = stdout;
 
 	signal(SIGINT, interrupt_ctrl_c);
 
@@ -48,98 +45,50 @@ int main(void) {
 	char *argv[MAXARG];
 	argc = MAXARG;
 
-	// char *cmd_temp;
 
 	char *user_name; 
 	char line[MAXLINE];
 	char endstr[] = ENDSTR;
 	
+	//Se deifne el username. se asume que no se cambia de username durante la ejecucion del programa
 	user_name = strdup(getenv("USER"));
-//	print_prompt(user_name);
 
 	while(minish_run) {
 		print_prompt(user_name);
 		
-//		getcwd(directory, MAXWORDS);
-//		fprintf(stdout, "(minish) (%s):%s> ", user_name, directory);
 		if(fgets(line, MAXLINE, stdin) == NULL) {
 			break;
 		}
-
+		
+		//Se incluye um comando especial de salida
 		if(strcmp(line, endstr) == 0) {
 			break;
 		}
-		
+		//Guarda la liena recien leida
 		if (save_history(line)) {
 			exit(EXIT_FAILURE);
 		}
+		//castea la line a argv
 		cmd_argc = linea2argv(line, argc, argv);
 		if(cmd_argc > 0) {
-	
+			//ejecuta el comnado en base a lo que se almaceno en argvv y devuelve el status del comando
 			globalstatret = ejecutar(cmd_argc, argv);
 		
 		
-//			io_reset(argv);	
-//			printf("Exit status: %d\n", globalstatret);
 		}		
+		//Cheuqea la existencia de errores en la ejecucion de los comandos
 		if(globalstatret != 0 || cmd_argc < 0) {
 			fprintf(stderr, "Error with commnad %s!\n%s\n", *argv, strerror(errno));
 	
 	
 		}
-//		print_prompt(user_name);
 	}
-
+	//Escribe el archivo log de lineas
 	if (write_history()) {
 		exit(EXIT_FAILURE);
 	}
 	
+	//Realiza el exit del minishell
 	exit_status();
 	exit(EXIT_SUCCESS);
-
 }
-
-
-/*
-	int argc, cmd_argc, result;
-	char *argv[MAXARG];
-	argc = MAXARG;
-//	char **argvp;
-
-	char *user_name, *directory; 
-	char line[MAXLINE];
-	char endstr[] = ENDSTR;
-	
-	user_name = strdup(getenv("USER"));
-	directory = strdup(getenv("PWD"));
-	
-	fprintf(stderr, "(minish) (%s):%s > ", user_name, directory);
-
-	while( fgets(line, MAXLINE, stdin) != NULL ) {
-		
-		if( strcmp(line, endstr) == 0 ){
-			break;
-		}
-		
-		cmd_argc = linea2argv(line, argc, argv);
-
-		
-		argvp = argv;
-
-		printf("%d\n", cmd_argc);
-
-		while( *argvp != NULL ){
-			printf("%s\n", *argvp++);
-		}
-
-		result = ejecutar(cmd_argc, argv);
-
-//		printf("Exit status: %d\n", result);
-
-		fprintf(stderr, "(minish) (%s):%s > ", user_name, directory);
-	}
-	
-	printf("\n");
-	exit(EXIT_SUCCESS);
-}	
-*/

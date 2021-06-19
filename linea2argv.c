@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include "minish.h"
 
-//#define MAXWORD 1024
 
 int
 linea2argv(char *linea, int argc, char **argv)
@@ -14,26 +13,31 @@ linea2argv(char *linea, int argc, char **argv)
 	char c;
 	int word_finded = 0;
 	
-
+	//Recorre una linea caracter a caracter y separa la linea en un array de palabras con una cantidad maxima de argc palabras
 	while( ((c=*linea++) != '\n') && (word_finded < argc) ){
+		//Estaba leyendo una palabra y llego un espacio
 		if( c == ' ' && in_word) {
 			in_word = 0;
 			*wp = '\0';
-		//	wp = word;
 			if( *word != '<' && *word != '>' ){
+				//Se agrega la palabra a la lista de palabras encontradas
 				*argv = strdup(word);
 				word_finded++;
 				argv++;
 			} else {
+
+			//Si el primer caracter de la palabra es un comando de redireccion de entrada/salida, no se agrega a argv. Por el contrario, se atiende la redireccion
 				if( io_set(word) != 0 ){
 					return -1;	
 				} 	
 			}
 		
-		} else if( c != ' ' ) {
+		} else if( c != ' ' ) { //Encuentro un caracter que no es espacio
 			if( in_word ){
+				//Ya estaba dentro de una palabra. Lo agrego a la palabra
 				*wp++ = c;
 			} else {
+				//Es el primer caracter de la palabra
 				wp = word;
 				*wp++ = c;
 				in_word = 1;
@@ -41,6 +45,8 @@ linea2argv(char *linea, int argc, char **argv)
 		}
 
 	}
+
+	///Analogo al while pero [ara la ultima palabra de la linea
 	if( c == '\n' && in_word ) {
 		*wp = '\0';
 
@@ -57,29 +63,3 @@ linea2argv(char *linea, int argc, char **argv)
 	return word_finded;
 
 }
-
-
-/*
-int
-main(void)
-{
-	int argc = 100;
-	char *argarray[argc];
-	char **argv = argarray;
-	char line[] = "arguno argdos -arg3";
-	char *lp = line;
-
-
-	int argnum = line2argv(line, argc, argv);
-	int i = 0;
-	while( argnum-- > 0 ){
-
-		printf("%d: %s\n", i++, *argv);
-		argv++;
-	}
-	
-}
-
-
-*/
-

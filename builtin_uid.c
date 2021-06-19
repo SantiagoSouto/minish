@@ -1,5 +1,6 @@
 #include "minish.h"
-
+#include <error.h>
+#include <errno.h>
 int
 builtin_uid(int argc, char *argv[])
 {
@@ -8,7 +9,7 @@ builtin_uid(int argc, char *argv[])
 	char *buf;
 	int bufsize;
 	int s;
-
+	//Chequea cantidad correcta de argumentos
 	if (argc != 1) {
 		fprintf(stderr, "Usage: %s\n", argv[0]);
 		errno = E2BIG;
@@ -22,16 +23,10 @@ builtin_uid(int argc, char *argv[])
 	buf = malloc(bufsize);
 	if (buf == NULL) {
 		perror("malloc");
-		return EXIT_FAILURE;
+		return errno;
 	}
-	/*
-	char *user_name, *directory; 
-	char line[MAXLINE];
-	char endstr[] = ENDSTR;
-
-	user_name = strdup(getenv("USER"));
-
-	*/       
+	
+	//Busca el nombre de usuario. Atiende errores en caso de que el usuario no exista o no se pueda completar la operacion
 	s = getpwnam_r(getenv("USER"), &pwd, buf, bufsize, &result);
 	if (result == NULL) {
 		if (s == 0)
@@ -40,7 +35,7 @@ builtin_uid(int argc, char *argv[])
 			errno = s;
 			perror("getpwnam_r");
 		}
-		return EXIT_FAILURE;
+		return errno;
 	}
 
 	printf("Name: %s; UID: %ld\n", pwd.pw_gecos, (long) pwd.pw_uid);

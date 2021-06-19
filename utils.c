@@ -6,7 +6,7 @@
 ************* COLORING UTILS **************
 *******************************************
 */
-
+///Finalmente no fueron usadas en la primer version
 void blue_bold() {
   printf("\033[1;34m");
 }
@@ -81,6 +81,7 @@ void list_print(struct list *l) {
 *******************************************
 */
 
+//Funciones encargadas de las redirecciones de entrada salida
 
 int fd_out;
 fpos_t pos_out;
@@ -89,16 +90,19 @@ fpos_t pos_out;
 int fd_in;
 fpos_t pos_in;
 
+//Vuelve la salida a la original (consola donde se ejecuto minish)
 void reset_out() {
 	fflush(stdout);
 	dup2(fd_out, fileno(stdout));
 	close(fd_out);
 	clearerr(stdout);
 	fsetpos(stdout, &pos_out);
+	//Importante setear lel stdout sin buffer para que se escriba todo en tiempo real
 	setvbuf(stdout, NULL, _IONBF, 0);
 	reset_out_needed = 0;
 }
 
+//Vuelve la entrada a la original (consola donde se ejecuto minish)
 void reset_in() {
 	fflush(stdin);
 	dup2(fd_in, fileno(stdin));
@@ -108,46 +112,30 @@ void reset_in() {
 	reset_in_needed = 0;
 }
 
-
+//Se encarga de resolver la necesidad de resetear outpu/input
 void io_reset() {
-	/*	FILE *cp;
-		if( base_stdout != stdout ){
-		cp = stdout;	
-		fclose(cp);
-		stdout = base_stdout;
-		}
-		if( base_stdin != stdin ){
-		cp = stdin;	
-		fclose(cp);
-		stdin = base_stdin;
-		}
-		*/
-
-	//	freopen("/dev/stdout", "w", stdout);
-	//	freopen("dev/stdin", "r", stdin);
-
-
 	if( reset_out_needed ){
 		reset_out();
 
 	}
-
 	if( reset_in_needed ){
 		reset_in();
 	}
 }
 
 
-
+//Se encarga de camviar direccion de salida
 int set_out(char *fname, char *tp) {
 	FILE *fp;
+	//Se abre el archivo de la nueva salida para saegurarse que no hay errores. Se maneja el error o se cierra y se continua
+	//Ineficiente pero mas seguro 
 	if( (fp=fopen(fname, tp)) == NULL ){
 		return errno;
 	} else{
 		fclose(fp);
 	}
 
-
+	//Se escribe lo que estaba en el buffer de escritura. Se duplica el file descriptor y se remplaza el stdout por el nuevo. Se cierra stdout
 	fflush(stdout);
 	fgetpos(stdout, &pos_out);
 	fd_out = dup(fileno(stdout));
@@ -159,8 +147,11 @@ int set_out(char *fname, char *tp) {
 }
 
 
+//Se encarga de camviar direccion de salida
 int set_in(char *fname, char *tp) {
 
+	//Se abre el archivo de la nueva entrada para saegurarse que no hay errores. Se maneja el error o se cierra y se continua
+	//Ineficiente pero mas seguro 
 	FILE *fp;
 	if( (fp=fopen(fname, tp)) == NULL ){
 		return errno;
@@ -168,6 +159,7 @@ int set_in(char *fname, char *tp) {
 		fclose(fp);
 	}
 
+	//Se escribe lo que estaba en el buffer de escritura (innecesario en este caso). Se duplica el file descriptor y se remplaza el stdin por el nuevo. Se cierra stdout
 	fflush(stdin);
 	fgetpos(stdin, &pos_in);
 	fd_in = dup(fileno(stdin));
@@ -178,12 +170,12 @@ int set_in(char *fname, char *tp) {
 	return 0;
 }
 
+//Funcion que atiende solicitudes de redireccion de entrada salida a un archivo especifico
 int io_set( char *fname) {
 	char *tp;
 	char wr[] = "w", ap[] = "a";
-	// FILE *fp;
 
-
+	//Se busca cual es la redireccionn deseada
 	if( *fname == '>' ){
 
 		if( *(fname+1) == '>' ) {
@@ -193,22 +185,9 @@ int io_set( char *fname) {
 			tp = wr;
 			fname = fname + 1;
 		}
-
-		//	if( (fp = freopen(fname, tp, stdout)) == NULL ){
-		//		return errno;
-		//	}
-		//stdout = fp;
-		//
-		//return 0;
 		return set_out(fname, tp);
 		
 	} else if( *fname++  == '<' ){
-
-		//	if( (fp = freopen(fname, "r", stdin)) == NULL ){
-		//		return errno;
-		//	}
-		//stdin = fp;
-		//	return 0;
 		return set_in(fname, "r");
 	}
 
@@ -216,23 +195,6 @@ int io_set( char *fname) {
 	return EXIT_SUCCESS;
 
 }
-
-
-/*
-   int
-   set_output(char *fname)
-   {
-   FILE *fp;
-   if( (fp = fopen(fname, "w")) == NULL ){
-   return errno;
-   }
-
-   stdout = fp;
-
-   return EXIT_SUCCESS;
-   }
-   */
-
 
 
 /*

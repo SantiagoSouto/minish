@@ -4,7 +4,7 @@
 #include "minish.h"
 
 
-
+//Funcion que busca builtin en el array de builtin por nombre
 extern struct builtin_struct *builtin_lookup(char *cmd) {
 
 	extern struct builtin_struct builtin_arr[];
@@ -23,27 +23,21 @@ extern struct builtin_struct *builtin_lookup(char *cmd) {
 
 
 
-
+//Funcion que ejecuta un comando
 int
 ejecutar(int argc, char **argv)
 {
 
 
-//	if( argc == 0 ) {
-
-		//fprintf(stderr, "Error, no hay comandos a ejecutar!\n");
-		//errno = EINVAL;
-	//	return 0;    
-//	}
-
-
 	int result = 0;
 	struct builtin_struct *function = builtin_lookup(*argv);
-
+	
+	//Se encontro funcion. Es interna. Se ejecuta runcion
 	if( function->func != NULL ){
 		result = function->func(argc, argv);
 	
 	} else{
+		//No se encontro funcion. Se asume que es externa. Se intnta ejecutar
 		result = externo(argc, argv);
 
 	}
