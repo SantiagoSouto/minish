@@ -15,7 +15,7 @@ int builtin_getenv (int argc, char **argv) {
 	char *env; 
 	switch (argc) {
 		case 1:
-			Devuelve todas la variables
+			//Devuelve todas la variables
 			allEnv = __environ; 
 			for (; *allEnv != NULL; allEnv++) {
 				printf("%s\n", *allEnv);
