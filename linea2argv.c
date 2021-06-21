@@ -1,12 +1,16 @@
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
 #include "minish.h"
 
 
-int
-linea2argv(char *linea, int argc, char **argv)
+int linea2argv(char *linea, int argc, char **argv)
 {
+	/*
+     * 
+     * Función que a partir de una linea de carateres
+	 * separa cada palabra y las coloca en un puntero 
+	 * a lineas de carateres.
+     * 
+    */
+
 	int in_word = 0;
 	char word[MAXWORDS];
 	char *wp = word;
@@ -25,13 +29,11 @@ linea2argv(char *linea, int argc, char **argv)
 				word_finded++;
 				argv++;
 			} else {
-
 			//Si el primer caracter de la palabra es un comando de redireccion de entrada/salida, no se agrega a argv. Por el contrario, se atiende la redireccion
 				if( io_set(word) != 0 ){
 					return -1;	
 				} 	
 			}
-		
 		} else if( c != ' ' ) { //Encuentro un caracter que no es espacio
 			if( in_word ){
 				//Ya estaba dentro de una palabra. Lo agrego a la palabra
@@ -43,10 +45,9 @@ linea2argv(char *linea, int argc, char **argv)
 				in_word = 1;
 			}
 		}
-
 	}
 
-	///Analogo al while pero [ara la ultima palabra de la linea
+	///Analogo al while pero para la ultima palabra de la linea
 	if( c == '\n' && in_word ) {
 		*wp = '\0';
 
@@ -61,5 +62,4 @@ linea2argv(char *linea, int argc, char **argv)
 	}
 	*argv = NULL;
 	return word_finded;
-
 }

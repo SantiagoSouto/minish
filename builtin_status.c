@@ -1,24 +1,21 @@
 #include "minish.h"
-#include <stdlib.h>
-#include <errno.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <stdio.h>
 
-int
-builtin_status(int argc, char *argv[])
+int builtin_status(int argc, char *argv[])
 {
-	//Chequea cantidad correcta de argumentos
+	/*
+     * 
+     * Función que muestra el estado del programa.
+     * 
+    */
+
+	// Verifica que se tenga la cantidad adecuada de argumentos
 	if (argc != 1) {
 		fprintf(stderr, "Usage: %s\n", argv[0]);
-	
 		errno = E2BIG;
 		return errno;
 	}
-	//DEvuelve el ultimo status de retorno
+	// Imprime el ultimo status de retorno
 	printf("Status: %d\n", globalstatret);
-
-
 
 	return EXIT_SUCCESS;
 }

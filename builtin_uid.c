@@ -1,15 +1,21 @@
 #include "minish.h"
-#include <error.h>
-#include <errno.h>
-int
-builtin_uid(int argc, char *argv[])
+
+int builtin_uid(int argc, char *argv[])
 {
+	/*
+     * 
+     * Función que muestra la información del
+	 * usuario y dueño del programa.
+     * 
+    */
+
 	struct passwd pwd;
 	struct passwd *result;
 	char *buf;
 	int bufsize;
 	int s;
-	//Chequea cantidad correcta de argumentos
+	
+	// Verifica que se tenga la cantidad adecuada de argumentos
 	if (argc != 1) {
 		fprintf(stderr, "Usage: %s\n", argv[0]);
 		errno = E2BIG;
@@ -39,6 +45,7 @@ builtin_uid(int argc, char *argv[])
 	}
 
 	printf("Name: %s; UID: %ld\n", pwd.pw_gecos, (long) pwd.pw_uid);
+	free(buf);
 
 	return EXIT_SUCCESS;
 }

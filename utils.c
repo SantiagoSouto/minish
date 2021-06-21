@@ -58,6 +58,7 @@ struct list *list_push(struct list *l, char *cmd) {
   return l;
 }
 
+// Elimina la lista con sus respectivos free
 void list_free(struct list *l) {
   struct listnode *node = l->first;
   for (; node != NULL; node = node->next) {
@@ -66,6 +67,7 @@ void list_free(struct list *l) {
   free(l);
 }
 
+// Imprime la lista
 void list_print(struct list *l) {
   for (struct listnode *n = l->last; n != NULL; n = n->prev) {
     printf("%s", n->cmd);
@@ -203,7 +205,7 @@ int io_set( char *fname) {
 *******************************************
 */
 
-
+// Genera el timestamp para el history con sus respectivos colores de impresión
 char *get_timestamp() {
     
 	char *timestamp = (char *)malloc(sizeof(char));
@@ -228,6 +230,7 @@ char *get_timestamp() {
     return timestamp;
 }
 
+// Guarda el comando line en la lista de history
 int save_history(char *line) {
 	char *timestamp = get_timestamp();
 	if (timestamp == NULL) {
@@ -248,6 +251,7 @@ int save_history(char *line) {
 
 }
 
+// Graba en el archivo .minish_history la lista actual de comandos ejecutados
 int write_history() {
     char *pathname = malloc(sizeof(char)*MAXWORDS);
     snprintf(pathname, MAXWORDS, "/home/%s/.minish_history", getenv("USER"));
@@ -268,6 +272,7 @@ int write_history() {
     return 0;
 }
 
+// Lee las primeras n lineas del archivo .minish_history
 int get_history(struct list *l, int n) {
 	char *pathname = malloc(sizeof(char)*MAXWORDS);
     snprintf(pathname, MAXWORDS, "/home/%s/.minish_history", getenv("USER"));
@@ -295,10 +300,12 @@ int get_history(struct list *l, int n) {
 *******************************************
 */
 
+// Función que captura el Ctrl+C
 void interrupt_ctrl_c() {
 	fprintf(stderr, "Linea cancelada.\nVuelva a escribir el comando deseado: > ");
 }
 
+// Función al terminar la ejecución del minish
 void exit_status() {
 	fprintf(stderr, "Exiting...\n");
 	builtin_status(1, NULL);

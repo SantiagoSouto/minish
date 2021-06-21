@@ -1,16 +1,16 @@
 #include "minish.h"
 
-#include <stdlib.h>
-#include <errno.h>
-
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <stdio.h>
-
-int
-builtin_cd(int argc, char *argv[])
+int builtin_cd(int argc, char *argv[])
 {
+	/*
+	 *
+	 * Función que cambia de directorio segun argumentos que se agregan
+	 * Si no se agregan argumentos, se redirige al directorio raíz (HOME),
+	 * si se pasa como argumento un "-" se redirige al directorio anterior,
+	 * y si se pasa un argumento sin "-" se intenta redirigir al directorio 
+	 * de dicho argumento.
+	 *
+	*/
 	int status;
 	int result;
 	char *dir;
@@ -21,14 +21,14 @@ builtin_cd(int argc, char *argv[])
 
 
 
-	//Chequea cnatida de argumentos correcta	
+	//Chequea cantidad de argumentos correcta	
 	if (argc > 2) {
 		fprintf(stderr, "Usage: %s [dir]\n", argv[0]);
 		errno = E2BIG;	
 		return errno;
 	}
 
-	//Resuelve directorio nuevo
+	//Resuelve directorio a home
 	if( argc == 1 ){
 		dir = getenv("HOME");
 	}	
@@ -40,6 +40,7 @@ builtin_cd(int argc, char *argv[])
 		o_pwd = strdup(getenv("OLDPWD"));
 		dir = o_pwd;
 		} else{
+			//Resuelve el directorio que se pide
 			dir = *(argv+1);
 		}
 	}

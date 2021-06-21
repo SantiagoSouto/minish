@@ -1,18 +1,25 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <error.h>
-#include <errno.h>
-#include <string.h>
+#include "minish.h"
 
-//Devuelve variables de amiente
-int builtin_getenv (int argc, char **argv) {
+int builtin_getenv (int argc, char **argv) 
+{
+	/*
+     * 
+     * Función que imprime variables de entorno. Ya sea todas 
+	 * las del sistema o la cantidad especificada por los argumentos
+	 * agregados.
+     * 
+    */
+
+   	// Verifica que se tenga algún argumento
 	if( argc < 1 ){
 		printf( "No hay argumentos suficientes\n");
 		return 1;
 	}
-	char **allEnv; // when every env variable is asked
+	// Cuando todas las variables se piden
+	char **allEnv;
+	// Cuando se pide una cantidad acotada
 	char *env; 
+	// Según la cantidad de argumentos, depende lo que se imprime
 	switch (argc) {
 		case 1:
 			//Devuelve todas la variables
@@ -36,15 +43,26 @@ int builtin_getenv (int argc, char **argv) {
 	return EXIT_SUCCESS;
 }
 
-//Seta variables de ambiente
-int builtin_setenv (int argc, char **argv) {
+
+int builtin_setenv (int argc, char **argv) 
+{
+	/*
+     * 
+     * Función que setea variables de entorno. Es importante
+	 * verificar que se setee de a una variable por vez.
+     * 
+    */
+
+   	// Verifica que se tengan exactamente tres argumentos (uno "setenv" y la llave-valor)
 	if(argc != 3){
 
 		fprintf(stderr, "Usage: %s [name] [value]\n", argv[0]);
 		return EXIT_FAILURE;
 	}
 
+	// El primer argumento es el nombre de la variable (llave)
 	char *env = *(++argv);
+	// El segundo argumento es el valor de dicha variable (valor)
 	char *val = *(++argv);
 
 	//Setea la variable si es posible. Sobreescribe si ya existia
@@ -54,19 +72,29 @@ int builtin_setenv (int argc, char **argv) {
 		return errno;
 	}
 
-
 	return EXIT_SUCCESS;
 }
 
-//Borra una variable previamente sereada
-int builtin_unsetenv (int argc, char ** argv) {
+
+int builtin_unsetenv (int argc, char ** argv) 
+{
+	/*
+     * 
+     * Función que borra aquellas variables de entorno especificadas 
+	 * por los argumentos agregados.
+     * 
+    */
+
+   	// Verifica que se tenga algún argumento
 	if (argc < 1) {
 	    printf( "No hay argumentos suficientes\n");
 	    return 1;
 	}
 	
+	// Variable para verificar el estado de cada borrado
 	int status;
 
+	// Se deben pasar al 2 arguementos, con los nombres de las "llaves" a eliminar
 	switch (argc) {
 		case 1:
 			//No se especifica la variable a borrar

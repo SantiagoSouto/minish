@@ -25,6 +25,8 @@ struct builtin_struct builtin_arr[] = {
 { "history", builtin_history, HELP_HISTORY },
 { "exit", builtin_exit, HELP_EXIT },
 { "help", builtin_help, HELP_HELP },
+{ "huffman", builtin_huffman, HELP_HUFFMAN },
+{ "huffman-d", builtin_huffman_d, HELP_HUFFMAN_D },
 {NULL, NULL, NULL}
 };
 //Varibale para guardar el directorio local
@@ -37,7 +39,8 @@ void print_prompt(char *user) {
 	printf("(minish) (%s):%s> ", user, directory);
 }
 
-int main(void) {
+int main(void) 
+{
 
 	signal(SIGINT, interrupt_ctrl_c);
 

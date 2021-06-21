@@ -1,6 +1,16 @@
 #include "minish.h"
 
-int externo(int argc, char **argv) {
+int externo(int argc, char **argv) 
+{
+	/*
+     * 
+     * Función que ejecuta un comando externo. Hace un fork, 
+	 * para no perder la ejecución del programa minish y con
+	 * el proceso hijo, ejecuta el comando externo.
+     * 
+    */
+
+   	// Verifica que se tenga algún argumento
 	if( argc < 1 ){
 		printf( "No hay argumentos suficientes\n");
 		return 1;
@@ -17,7 +27,7 @@ int externo(int argc, char **argv) {
 			return errno;
 		case 0:
 			execvp(*argv, argv);
-			//El execve falla
+			//El execvp falla
 			//En caso del que comando no se encietre se atiende el error. De lo contrario el error se atiende por el comando
 			fprintf(stderr, "%s: command not found!\n", *argv);
 			//Se termina el proceso hijo
@@ -29,6 +39,5 @@ int externo(int argc, char **argv) {
 			break;
 	}
 
-	return 0;
-
+	return EXIT_SUCCESS;
 }

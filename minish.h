@@ -9,7 +9,7 @@
 #define HELP_CD      "cd [..|dir] - cambia de directorio corriente"
 #define HELP_DIR     "dir [str]- muestra archivos en directorio corriente, que tengan 'str'"
 #define HELP_EXIT    "exit [status] - finaliza el minish con un status de retorno (por defecto 0)"
-#define HELP_HELP    "help [cd|dir|exit|help|history|getenv|pid|setenv|status|uid]"
+#define HELP_HELP    "help [cd|dir|exit|help|history|getenv|pid|setenv|status|uid|huffman|huffman-d]"
 #define HELP_HISTORY "history [N] - muestra los últimos N (10) comandos escritos"
 #define HELP_GETENV  "getenv var [var] - muestra valor de variable(s) de ambiente"
 #define HELP_PID     "pid - muestra Process Id del minish"
@@ -18,6 +18,8 @@
 #define HELP_STATUS  "status - muestra status de retorno de ultimo comando ejecutado"
 #define HELP_UID     "uid - muestra nombre y número de usuario dueño del minish"
 #define HELP_GID     "gid - muestra el grupo principal y los grupos secundarios del usuario dueño del minish"
+#define HELP_HUFFMAN "huffman [file] - comprime un archivo con el algoritmo de Huffman"
+#define HELP_HUFFMAN_D "huffman-d [file] - descomprime un archivo comprimido por el algoritmo de Huffman"
 
 
 #include <unistd.h>
@@ -60,6 +62,9 @@ extern int builtin_unsetenv (int argc, char **argv);
 extern int ejecutar (int argc, char **argv);
 extern int externo (int argc, char **argv);
 extern int linea2argv(char *linea, int argc, char **argv);
+
+extern int builtin_huffman (int argc, char **argv);
+extern int builtin_huffman_d (int argc, char **argv);
 
 struct builtin_struct {         // struct con información de los builtins
     char *cmd;                  // nombre del comando builtin

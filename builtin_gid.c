@@ -1,11 +1,20 @@
 #include "minish.h"
 
-int builtin_gid(int argc, char *argv[]) {
+int builtin_gid(int argc, char *argv[]) 
+{
+	/*
+     * 
+     * Función que muestra tanto el grupo principal del
+	 * usuario, como los grupos secundarios de dicho usuario
+     * 
+    */
+
 	int i = 0;
 	unsigned int s_gid[MAXGROUPS];
 	int n_gr = 0;
 	struct group *grp;
 
+	// Verifica que se tenga la cantidad adecuada de argumentos
 	if (argc != 1) {
 		fprintf(stderr, "Usage: %s\n", argv[0]);
 		errno = E2BIG;
@@ -29,4 +38,3 @@ int builtin_gid(int argc, char *argv[]) {
 	
 	return EXIT_SUCCESS;
 }
-
